@@ -20,11 +20,17 @@ function onAddItemSubmit(e) {
         alert('Please add an item!');
         return;
     }
+    //Check for edit mode
+    if (isEditMode) {
+        const itemToEdit = itemList.querySelector('.edit-mode');
+        removeItemFromStorage(itemToEdit.textContent);
+        itemToEdit.classList.remove('edit-mode');
+        itemToEdit.remove();
+    }
     //Create item DOM element
     addItemToDOM(newItem);
     //Add item to LocalStorage
     addItemToStorage(newItem);
-
     checkUI();
     itemInput.value = '';
 }
@@ -55,7 +61,6 @@ function createIcon(classes) {
 
 function addItemToStorage(item) {
     let itemFromStorage = getItemFromStorage();
-
     itemFromStorage.push(item);
     //Convert to JSON string and set to local storage
     localStorage.setItem('items', JSON.stringify(itemFromStorage));
@@ -107,7 +112,7 @@ function removeItemFromStorage(item) {
     localStorage.setItem('items', JSON.stringify(itemsFromStorage));
 }
 
-function clearItems(e) {
+function clearItems() {
     while (itemList.firstChild) {
         itemList.removeChild(itemList.firstChild);
     }
@@ -132,6 +137,7 @@ function filterItems(e) {
 }
 
 function checkUI() {
+    itemInput.value = '';
     const items = itemList.querySelectorAll('li');
     if (items.length === 0) {
         clearBtn.style.display = 'none';
@@ -140,6 +146,9 @@ function checkUI() {
         clearBtn.style.display = 'block';
         itemFilter.style.display = 'block';
     }
+    isEditMode = false;
+    formBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Item';
+    formBtn.style.backgroundColor = '#333';
 }
 
 //Initialize app
